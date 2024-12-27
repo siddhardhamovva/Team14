@@ -1,0 +1,30 @@
+library(dplyr)
+
+Datas = read.csv("4- cancer-death-rate-who-mdb.csv")
+colnames(Datas)[4] = "DeathRate"
+Datas = Datas[c("Entity", "Year", "DeathRate")]
+Datas = na.omit(Datas)
+
+
+
+Normalized = Datas %>%
+  mutate(Normalized_DeathRate = (DeathRate / max(Datas$DeathRate)) * 100)
+write.csv(Normalized, "Normalized.csv", row.names = FALSE)
+
+
+
+Yearsunique = Datas %>% group_by(Entity) %>%
+  summarise(Unique_Years = n_distinct(Year)) %>%
+  arrange(Entity) %>%
+  mutate(Output = paste0(Entity, " (", Unique_Years, " Years)"))
+
+Countriesunique = Datas %>% group_by(Year) %>%
+  summarise(Unique_Countries = n_distinct(Entity)) %>%
+  arrange(Year) %>%
+  mutate(Output = paste0(Year, " (", Unique_Countries, " Countries)"))
+
+UniqueEntityYear = data.frame(Yearsunique = Yearsunique$Output,
+  Countriesunique = c(Countriesunique$Output, 
+                      rep(NA, length(Yearsunique$Output) - length(Countriesunique$Output))))
+
+write.csv(UniqueEntityYear,"UniqueEntityYear.csv" , row.names = FALSE)
