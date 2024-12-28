@@ -1,0 +1,25 @@
+ggplot(SelectedData, aes(x = DeathRate)) +
+ geom_histogram(aes(y = ..count..), bins = 18, color = "black",
+                fill = "#17395c", alpha = 0.9) +
+ 
+ stat_function(fun = function(x) dnorm(x, mean = mean(SelectedData$DeathRate),
+                                       sd = sd(SelectedData$DeathRate)) *
+                 length(SelectedData$DeathRate) * diff(range(SelectedData$DeathRate)) / 18,
+               color = "red", size = 1) +
+ 
+ labs(title = "Histogram of Death Rates with Normal Distribution Curve",
+      x = "Cancer Death Rate",
+      y = "Frequency",
+      caption = "Death Rate is age-standardized mortality rate from malignant neoplasms per 100,000 people") +
+ 
+ xlim(0, max(SelectedData$DeathRate)) +
+ scale_x_continuous(breaks = seq(0, max(SelectedData$DeathRate),
+                                 length.out = 18)) +
+ 
+ theme_minimal() +
+ theme(
+   axis.text.x = element_text(hjust = 1),
+   legend.position = "right",
+   panel.grid.major = element_blank(),
+   panel.grid.minor = element_blank(),
+   plot.title = element_text(hjust = 0.5))
