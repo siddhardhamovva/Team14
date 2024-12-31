@@ -1,0 +1,23 @@
+library(ggplot2)
+library(scales)
+library(dplyr)
+
+Datas = read.csv("4- cancer-death-rate-who-mdb.csv")
+colnames(Datas)[4] = "DeathRate"
+Datas = Datas[c("Entity", "Year", "DeathRate")]
+Datas = na.omit(Datas)
+
+Random_years = sample(unique(Datas$Year), 2)
+print(Random_years)
+SelectedData = Datas %>%
+  filter(Year %in% Random_years)
+
+mean_r1 = mean(SelectedData$DeathRate[SelectedData$Year == Random_years[1]])
+mean_r2 = mean(SelectedData$DeathRate[SelectedData$Year == Random_years[2]])
+print(mean_r1)
+print(mean_r2)
+
+write.csv(SelectedData, "SelectedData.csv", row.names = FALSE)
+
+wilcox_test_result = wilcox.test(DeathRate ~ Year, data = SelectedData)
+print(wilcox_test_result)
